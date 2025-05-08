@@ -1,0 +1,62 @@
+Data Cleaning and Transformation (Power Query M Code)
+
+Changed Data Types
+Table.TransformColumnTypes(Source,{
+    {"salary", type number},
+    {"salary_USD", type number},
+    {"experience_level", type text},
+    {"employment_type", type text}
+})
+ Filtered Null or Blank Job Titles
+Table.SelectRows(PreviousStep, each [job_title] <> null and [job_title] <> "")
+ Replaced Incorrect Values (e.g., salary currency typos)
+Table.ReplaceValue(PreviousStep, "us dolars", "USD", Replacer.ReplaceText, {"salary_currency"})
+Handled Negative Salary Values
+Table.TransformColumns(PreviousStep, {{"salary", each Number.Abs(_), type number}})
+Replaced Nulls in Experience Level
+Table.ReplaceValue(PreviousStep, null, "Entry Level", Replacer.ReplaceValue, {"experience_level"})
+ Cleaned and Standardized Abbreviations
+Table.ReplaceValue(PreviousStep, "EN", "Entry Level", Replacer.ReplaceText, {"experience_level"})
+Table.ReplaceValue(PreviousStep, "MI", "Mid Level", Replacer.ReplaceText, {"experience_level"})
+Table.ReplaceValue(PreviousStep, "SE", "Senior Level", Replacer.ReplaceText, {"experience_level"})
+Table.ReplaceValue(PreviousStep, "EX", "Executive Level", Replacer.ReplaceText, {"experience_level"})
+Trimmed Job Title Whitespace
+Table.TransformColumns(PreviousStep, {{"job_title", Text.Trim}})
+3. DAX Measures Used
+Average Salary
+AVERAGE('Job'[salary_USD])
+Max Salary
+MAX('Job'[salary_USD])
+Min Salary
+MIN('Job'[salary_USD])
+Total Jobs
+COUNTROWS('Job')
+ Full-Time Jobs
+CALCULATE(COUNTROWS('Job'), 'Job'[employment_type] = "Full-Time")
+Freelance Jobs
+CALCULATE(COUNTROWS('Job'), 'Job'[employment_type] = "Freelance")
+Contract Jobs
+CALCULATE(COUNTROWS('Job'), 'Job'[employment_type] = "Contract")
+ Unique Job Titles
+DISTINCTCOUNT('Job'[job_title])
+ Avg Salary by Experience Level
+AVERAGEX(
+    VALUES('Job'[experience_level]),
+    CALCULATE(AVERAGE('Job'[salary_USD]))
+)
+ Month Number
+SWITCH(
+    'Job'[MONTH],
+    "Jan", 1,
+    "Feb", 2,
+    "Mar", 3,
+    "Apr", 4,
+    "May", 5,
+    "Jun", 6,
+    "Jul", 7,
+    "Aug", 8,
+    "Sep", 9,
+    "Oct", 10,
+    "Nov", 11,
+    "Dec", 12
+)
