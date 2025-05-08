@@ -5,6 +5,7 @@ Project Overview:
 This project involved building an interactive Employability Analytics Dashboard using Power BI. 
 The goal was to help job seekers and consultants explore job market trends, salary insights, skill demands, and location-based job opportunities.
 The dataset was cleaned and transformed using Power Query (M Language), and insights were derived using DAX calculations in Power BI.
+
 Data Collection : 
 The dataset is collected from Kaggle .
 
